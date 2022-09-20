@@ -4,6 +4,7 @@
   import DogEditList from './DogEditList.svelte';
   import DogList from './DogList.svelte';
   import { client, userID, dogs } from './stores.js';
+  import Notification from './Notification.svelte';
   
   userID.subscribe(async (id) => {
     $client.realtime.subscribe("dogs" , function (e) {
@@ -39,6 +40,8 @@
       </Menu>
     </div>
     <span slot="title">Zoomies Notifications</span>
+    <div style="flex-grow:1" />
+    <Notification />
   </AppBar>
   <DogList />
 </div>

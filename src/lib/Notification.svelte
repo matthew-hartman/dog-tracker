@@ -1,31 +1,54 @@
 <script>
-  import { client } from './stores.js'
+  import { client, userID } from './stores.js'
   import { getSubscription } from './notify.js'
+  import { mdiBellCancel, mdiBellCheck  } from '@mdi/js';
+  import { Chip, Icon } from 'svelte-materialify';
 
-  let enabled = false
+  let uuid = localStorage.getItem('UUID');
+  let enabled = uuid ? true : false;
+  console.log(uuid);
+
   async function toggle() {
     enabled = !enabled
     if (enabled) {
       const i = await getSubscription()
-      const user = await $client.users.refresh();
-
-      const r = await $client.records.create('vapid', {
-        subscription: i,
-        user: user.user.id,
-      })
+      console.log(i)
+      try {
+        const res = await $client.records.create('vapid', {
+          subscription: i,
+          user: $userID,
+        })
+        uuid = res.id
+        localStorage.setItem('UUID', uuid)
+      } catch (e) {
+        console.log(e)
+      }
+    } else {
+      try {
+        await $client.records.delete('vapid', uuid)
+        localStorage.removeItem('UUID')
+        uuid = null
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
   async function getNotificationStatus() {
+    if (uuid === null) {
+      return false
+    }
     const record = await $client.records.getFullList('vapid')
-    if (record.length > 0) {
-      enabled = true
+    for (const i of record) {
+      if (i.deviceID == uuid) {
+        enabled = true
+      }
     }
   }
   getNotificationStatus()
 </script>
 
-<main>
+<Chip>
   <button on:click={toggle}>
-    {enabled ? 'Disable' : 'Enable'} notifications
+    <Icon path={enabled ? mdiBellCheck : mdiBellCancel} />
   </button>
-</main>
+</Chip>

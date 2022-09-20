@@ -1,7 +1,8 @@
-const vapidKey = 'BN6-EtYW77gpivFftyeHst4y7sMS6vmBFgBmepsTVjvqaNk7aonXguA9tDTHK2QrJdRPb9V74epQNn67mkuObco';
+const vapidKey = 'BNv0koJISaKQjI_5Dy2rSThQGBi2_bWczcdf_C4V8QfwMD6ss-pC9jXNFdkAHZiKi82z2ZqmylLd-gZXH38fU9k';
 
 export const getSubscription = async function() {
     const registration = await navigator.serviceWorker.register('worker.js', {scope: '/'});
+    await navigator.serviceWorker.ready;
     return await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidKey)

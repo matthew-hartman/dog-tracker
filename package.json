@@ -18,6 +18,7 @@
     "@mdi/js": "^7.0.96",
     "longpress-svelte": "^1.0.0",
     "pocketbase": "^0.7.0",
-    "svelte-materialify": "^0.3.11"
+    "svelte-materialify": "^0.3.11",
+    "uuid": "^9.0.0"
   }
 }
