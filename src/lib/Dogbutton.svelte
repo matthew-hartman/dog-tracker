@@ -2,7 +2,6 @@
   import { MaterialApp, Button, Col } from 'svelte-materialify';
   import { afterUpdate } from 'svelte';
   import { client } from './stores.js';
-  import longpress from 'longpress-svelte';
 
   export let dog;
 
@@ -19,19 +18,35 @@
     }
 	});
 
-  function handleClick() {
+  function handleClick(e) {
+    if (e.timeStamp - cooldown < 5500) {
+      return
+    }
     if (dog.state == "waiting") {
       $client.records.update('dogs', dog.id, {state: "notify"})
     }
   }
 
-  function handleLong() {
+  let timer;
+  let cooldown;
+
+  function updateDog(e) {
     if (dog.state == "notify" || dog.state == "acked") {
       $client.records.update('dogs', dog.id, {state: "waiting"})
     }
+    if (dog.state == "waiting") {
+      $client.records.update('dogs', dog.id, {state: "hidden"})
+    }
+    cooldown = e.timeStamp
   }
-  function handleExtraLong() {
-    $client.records.update('dogs', dog.id, {state: "hidden"})
+
+  function handleDown(e) {
+    timer = setTimeout(() => {
+      updateDog(e)
+    }, 500)
+  }
+  function handleUp(e) {
+    clearTimeout(timer);
   }
 
 </script>
@@ -39,9 +54,9 @@
 {#if dog.state != "hidden"}
 <MaterialApp>
   <Col >
-    <div use:longpress={{ duration: 200, listener: handleLong }} use:longpress={{ duration: 1000, listener: handleExtraLong }}>
+    <div on:touchstart={handleDown} on:touchend={handleUp} on:mousedown={handleDown} on:mouseup={handleUp}>
       <Button size="x-large" class={classname} rounded block on:click={handleClick} >
-        {dog.name}: {dog.state}: {classname}
+        {dog.name}
       </Button>
     </div>
   </Col>

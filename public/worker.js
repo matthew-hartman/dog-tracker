@@ -1,6 +1,4 @@
 self.addEventListener('push', event => {
-    console.log('[Service Worker] Push Received.');
-    console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
     console.log(event.data.json());
   
     const notification = event.data.json();
@@ -10,8 +8,15 @@ self.addEventListener('push', event => {
       body: notification.body,
       icon: notification.icon,
       vibrate: notification.vibrate,
+      tag: notification.dogID,
     };
   
-    event.waitUntil(self.registration.showNotification(title, options));
-  });
+    self.registration.showNotification(title, options);
+});
   
+self.addEventListener('notificationclick', (event) => {
+  fetch("/notify?dogID=" + event.notification.tag, {
+    method: "POST",
+  })
+  event.notification.close();
+});

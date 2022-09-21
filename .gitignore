@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .env
+dog-tracker
 pb_data
 
 # Editor directories and files

@@ -26,11 +26,11 @@
     } else {
       try {
         await $client.records.delete('vapid', uuid)
-        localStorage.removeItem('UUID')
-        uuid = null
       } catch (e) {
         console.log(e)
       }
+      localStorage.removeItem('UUID')
+      uuid = null
     }
   }
   async function getNotificationStatus() {

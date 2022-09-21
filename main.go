@@ -36,6 +36,7 @@ func main() {
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.GET("/*", apis.StaticDirectoryHandler(f, false))
+		e.Router.POST("/notify", ctlr.handleNotify)
 		return nil
 	})
 	app.OnRecordAfterUpdateRequest().Add(ctlr.handleNotifyState)
